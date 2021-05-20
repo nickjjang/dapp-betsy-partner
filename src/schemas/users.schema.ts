@@ -3,7 +3,7 @@ import { Document } from 'mongoose';
 export type UserDocument = User & Document;
 
 @Schema()
-export class User {
+export class UserCustomField {
   @Prop()
   firstName: string;
 
@@ -45,6 +45,30 @@ export class User {
 
   @Prop()
   userSessionCountry: string;
+}
+
+@Schema({
+  toJSON: {
+    transform: function (doc, ret) {
+      ret.userId = ret._id;
+    },
+  },
+})
+export class User {
+  @Prop({ unique: true })
+  token: string;
+
+  @Prop({ default: 0 })
+  balance: number;
+
+  @Prop()
+  currency: string;
+
+  @Prop({ type: UserCustomField })
+  customFields: UserCustomField;
+
+  @Prop()
+  isTest: boolean;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
